@@ -8,8 +8,9 @@ class ExpenseForm extends React.Component {
         description: '',
         note: '',
         amount: '',
-        createdAt: moment(),
-        calendarFocused: false
+        createAt: moment(),
+        calendarFocused: false,
+        error: ''
     }
     onDescriptionChange = (e) => {
         const description = e.target.value
@@ -21,20 +22,38 @@ class ExpenseForm extends React.Component {
     }
     onAmountChange = (e) => {
         const amount = e.target.value
-        if (amount.match(/^\d*(\.\d{0,2})?$/)) {
+        if (!amount || amount.match(/^\d{1,}(\.\d{0,2})?$/)) {
             this.setState(() => ({ amount }))
         }
     }
-    onDateChange = (createdAt) => {
-        this.setState(() => ({ createdAt }))
+    onDateChange = (createAt) => {
+        if (createAt) {
+            this.setState(() => ({ createAt }))
+        }
     }
     onFocusChange = ({ focused }) => {
         this.setState(() => ({ calendarFocused: focused }))
     }
+    onSubmit = (e) => {
+        e.preventDefault()
+        if (!this.state.description || !this.state.amount) {
+            this.setState(() => ({ error: 'Please provide description and amount.' }))
+        }
+        else {
+            this.setState(() => ({ error: '' }))
+            this.props.onSubmit({
+                description: this.state.description,
+                amount: parseFloat(this.state.amount, 10) * 100,
+                createAt: this.state.createAt.valueOf(),
+                note: this.state.note
+            })
+        }
+    }
     render() {
         return (
             <div>
-                <form>
+                {this.state.error && <p>{this.state.error}</p>}
+                <form onSubmit={this.onSubmit}>
                     <input
                         type="text"
                         placeholder="Description"
@@ -49,7 +68,7 @@ class ExpenseForm extends React.Component {
                         onChange={this.onAmountChange}
                     />
                     <SingleDatePicker
-                        date={this.state.createdAt}
+                        date={this.state.createAt}
                         onDateChange={this.onDateChange}
                         focused={this.state.calendarFocused}
                         onFocusChange={this.onFocusChange}
