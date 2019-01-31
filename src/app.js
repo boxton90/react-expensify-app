@@ -6,12 +6,6 @@ import configureStore from './store/configureStore'
 import 'normalize.css/normalize.css'
 import './styles/styles.scss'
 import 'react-dates/lib/css/_datepicker.css';
-import getExpensesTotal from './selectors/expenses-total'
-import expenses from './tests/fixtures/expenses'
-
-const total = getExpensesTotal(expenses)
-
-console.log('expense total: ', total)
 
 const store = configureStore()
 
